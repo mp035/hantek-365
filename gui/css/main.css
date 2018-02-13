@@ -60,7 +60,8 @@ body{
   left: 15px;
   right: 370px;
   top: 240px;
-  bottom: 165px;
+  bottom: 70px;
+  z-index: 100;
 }
 #div_t {
   position: absolute;
@@ -78,4 +79,8 @@ body{
   right: 375px;
   top: 15px;
   bottom: 15px;
+}
+
+.hidden {
+    display:none !important;
 }

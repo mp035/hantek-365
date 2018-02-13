@@ -25,9 +25,14 @@
     <div id="div_g"></div>
     <div id="div_t">
         <table id="tableReadings" class="ui table striped">
-            <tr>
-                <th>Date/Time</th><th>Reading</th><th>Unit</th>
-            </tr>
+            <thead>
+                <tr>
+                    <th>Date/Time</th><th>Reading</th><th>Unit</th>
+                </tr>
+            </thead>
+            <tbody id="bodyTableReadings">
+            </tbody>
+
         </table>
     </div>
 
@@ -41,58 +46,84 @@
             </h3>
 
             <div class="ui ten item fluid stackable huge menu" style="height:40px;">
-                <button class="active item" type="button" id="btnStartHantek">Run</button>
-                <button class="item rangeButton" type="button" id="btnVoltsDc" data-rangeValue="vdc">V DC</button>
-                <button class="item rangeButton" type="button" id="btnVoltsAc" data-rangeValue="vac">V AC</button>
-                <button class="item rangeButton" type="button" id="btnAmpsDc" data-rangeValue="adc">A DC</button>
-                <button class="item rangeButton" type="button" id="btnAmpsAc" data-rangeValue="aac">A AC</button>
-                <button class="item rangeButton" type="button" id="btnOhm" data-rangeValue="ohm">OHM</button>
-                <button class="item rangeButton" type="button" id="btnDiode" data-rangeValue="diode">DIODE</button>
-                <button class="item rangeButton" type="button" id="btnConti" data-rangeValue="cont">CONTI</button>
-                <button class="item rangeButton" type="button" id="btnCap" data-rangeValue="cap">CAP</button>
-                <button class="item rangeButton" type="button" id="btnTemp" data-rangeValue="temp">TEMP</button>
+                <button class="item rangeButton" type="button" id="btnStartHantek" data-rangeValue="">Restart</button>
+                <button class="item rangeButton majorModeButton" type="button" id="btnVoltsDc" data-rangeValue="vdc" data-activeUnits="VDC">V DC</button>
+                <button class="item rangeButton majorModeButton" type="button" id="btnVoltsAc" data-rangeValue="vac" data-activeUnits="VAC">V AC</button>
+                <button class="item rangeButton majorModeButton" type="button" id="btnAmpsDc" data-rangeValue="adc" data-activeUnits="ADC">A DC</button>
+                <button class="item rangeButton majorModeButton" type="button" id="btnAmpsAc" data-rangeValue="aac" data-activeUnits="AAC">A AC</button>
+                <button class="item rangeButton majorModeButton" type="button" id="btnOhm" data-rangeValue="ohm" data-activeUnits="ohms">OHM</button>
+                <button class="item rangeButton manuButton" type="button" id="btnDiode" data-rangeValue="diode" data-activeRange="6.000V">DIODE</button>
+                <button class="item rangeButton manuButton" type="button" id="btnConti" data-rangeValue="cont" data-activeRange="600.0ohms&#x266B;">CONTI</button>
+                <button class="item rangeButton majorModeButton" type="button" id="btnCap" data-rangeValue="cap" data-activeUnits="F">CAP</button>
+                <button class="item rangeButton majorModeButton" type="button" id="btnTemp" data-rangeValue="temp" data-activeUnits="&deg;C">TEMP</button>
             </div>
 
-            <div class="ui ten item fluid stackable huge menu" style="height:40px;">
-                <button class="item rangeButton" type="button" id="btnAutoVoltsDc" data-rangeValue="vdc">AUTO</button>
-                <button class="item rangeButton" type="button" id="btn60mVoltsDc" data-rangeValue="60mvdc">60mVDC</button>
-                <button class="item rangeButton" type="button" id="btn600mVoltsDc" data-rangeValue="600mvdc">600mVDC</button>
-                <button class="item rangeButton" type="button" id="btn6VoltsDc" data-rangeValue="6vdc">6VDC</button>
-                <button class="item rangeButton" type="button" id="btn60VoltsDc" data-rangeValue="60vdc">60VDC</button>
-                <button class="item rangeButton" type="button" id="btn600VoltsDc" data-rangeValue="600vdc">600VDC</button>
-                <button class="item rangeButton" type="button" id="btn800VoltsDc" data-rangeValue="800vdc">800VDC</button>
+            <div class="ui ten item fluid stackable huge menu rangeButtonGroup hidden" style="height:40px;" data-showSuffix="VDC">
+                <!--button class="item rangeButton autoButton" type="button" id="btnAutoVoltsDc" data-rangeValue="vdc" data-activeSuffix="VDC">AUTO</button-->
+                <button class="item rangeButton manuButton" type="button" id="btn60mVoltsDc" data-rangeValue="60mvdc" data-activeRange="60.00mVDC">60mV DC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn600mVoltsDc" data-rangeValue="600mvdc" data-activeRange="600.0mVDC">600mV DC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn6VoltsDc" data-rangeValue="6vdc" data-activeRange="6.000VDC">6V DC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn60VoltsDc" data-rangeValue="60vdc" data-activeRange="60.00VDC">60V DC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn600VoltsDc" data-rangeValue="600vdc" data-activeRange="600.0VDC">600V DC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn800VoltsDc" data-rangeValue="800vdc" data-activeRange="800VDC">800V DC</button>
             </div>
 
-            <div class="ui ten item fluid stackable huge menu" style="height:40px;">
-                <button class="item rangeButton" type="button" id="btnAutoVoltsAc" data-rangeValue="vac">AUTO</button>
-                <button class="item rangeButton" type="button" id="btn60mVoltsAc" data-rangeValue="60mvac">60mVAC</button>
-                <button class="item rangeButton" type="button" id="btn600mVoltsAc" data-rangeValue="600mvac">600mVAC</button>
-                <button class="item rangeButton" type="button" id="btn6VoltsAc" data-rangeValue="6vac">6VAC</button>
-                <button class="item rangeButton" type="button" id="btn60VoltsAc" data-rangeValue="60vac">60VAC</button>
-                <button class="item rangeButton" type="button" id="btn600VoltsAc" data-rangeValue="600vac">600VAC</button>
+            <div class="ui ten item fluid stackable huge menu rangeButtonGroup hidden" style="height:40px;" data-showSuffix="VAC">
+                <!--button class="item rangeButton autoButton" type="button" id="btnAutoVoltsAc" data-rangeValue="vac" data-activeSuffix="VAC">AUTO</button-->
+                <button class="item rangeButton manuButton" type="button" id="btn60mVoltsAc" data-rangeValue="60mvac" data-activeRange="60.00mVAC">60mV AC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn600mVoltsAc" data-rangeValue="600mvac" data-activeRange="600.0mVAC">600mV AC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn6VoltsAc" data-rangeValue="6vac" data-activeRange="6.000VAC">6V AC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn60VoltsAc" data-rangeValue="60vac" data-activeRange="60.00VAC">60V AC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn600VoltsAc" data-rangeValue="600vac" data-activeRange="600.0VAC">600V AC</button>
             </div>
+
+
+
+            <div class="ui ten item fluid stackable huge menu rangeButtonGroup hidden" style="height:40px;" data-showSuffix="AAC">
+                <button class="item rangeButton autoButton" type="button" id="btnMilliAmpsAc" data-rangeValue="maac" data-activeUnits="mAAC">mA AC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn60mVoltsAc" data-rangeValue="60maac" data-activeRange="60.00mAAC">60mA AC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn600mVoltsAc" data-rangeValue="600maac" data-activeRange="600.0mAAC">600mA AC</button>
+            </div>
+
+            <div class="ui ten item fluid stackable huge menu rangeButtonGroup hidden" style="height:40px;" data-showSuffix="ADC">
+                <button class="item rangeButton autoButton" type="button" id="btnMilliAmpsDc" data-rangeValue="madc" data-activeUnits="mADC">mA DC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn60mVoltsAc" data-rangeValue="60madc" data-activeRange="60.00mADC">60mA DC</button>
+                <button class="item rangeButton manuButton" type="button" id="btn600mVoltsAc" data-rangeValue="600madc" data-activeRange="600.0mADC">600mA DC</button>
+            </div>
+
+            <div class="ui ten item fluid stackable huge menu rangeButtonGroup hidden" style="height:40px;" data-showSuffix="ohms">
+                <button class="item rangeButton manuButton" type="button" id="btn600Ohm" data-rangeValue="600ohm" data-activeRange="600.0ohms">600 ohm</button>
+                <button class="item rangeButton manuButton" type="button" id="btn6kOhm" data-rangeValue="6kohm" data-activeRange="6.000kohms">6 kohm</button>
+                <button class="item rangeButton manuButton" type="button" id="btn60kOhm" data-rangeValue="60kohm" data-activeRange="60.00kohms">60 kohm</button>
+                <button class="item rangeButton manuButton" type="button" id="btn600kOhm" data-rangeValue="600kohm" data-activeRange="600.0kohms">600 kohm</button>
+                <button class="item rangeButton manuButton" type="button" id="btn6MOhm" data-rangeValue="6mohm" data-activeRange="6.000Mohms">6 Mohm</button>
+                <button class="item rangeButton manuButton" type="button" id="btn60MOhm" data-rangeValue="60mohm" data-activeRange="60.00Mohms">60 Mohm</button>
+            </div>
+
+
+
 
             </div>
             </div>
         </div>
-        <div class="expand-no ui large header">
-            <h1 id="dmmDisplay"></h2>
+        <div class="expand-no ui large header" style="margin-right:10px;margin-left:10px;">
+            <h3 id="rangeDisplay" style="display:inline;float:right;"></h3>
+            <h1 id="dmmDisplay" style="display:inline;"></h1>
         </div>
 
         <div class="expand-yes">
         </div>
 
-        <div class="expand-no" id="divStatus" style="overflow:scroll;height:100px;width:100%; flex: 0 0 100px;">
+
+        <!--div class="expand-no" id="divStatus" style="overflow:scroll;height:100px;width:100%; flex: 0 0 100px;">
             <pre id="preStatus"></pre>
-        </div>
+        </div-->
 
         <div class="expand-no">
             <div class="column">
                 <div class="ui divider"></div>
                 <footer>
-                    We are using Node.js <script>document.write(process.versions.node)</script>,
-                    Chromium <script>document.write(process.versions.chrome)</script>,
-                    and Electron <script>document.write(process.versions.electron)</script>.
+                        Datalogger Interface Software written by Mark Pointing. &copy; 2018 FuturePoint Systems <a href="futurepoint.com.au">www.futurepont.com.au</a>
                 </footer>
             </div>
         </div>

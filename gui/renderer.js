@@ -11,6 +11,8 @@ const { ipcRenderer, remote } = require('electron');
 var readingTotal = 0.0;
 var readingCount = 0;
 var readingUnit = "";
+var graphData = [];
+var graph;
 
 // wrap initHantekMessage in function call
 function startHantek(mode = '', relative = false){
@@ -22,21 +24,15 @@ function startHantek(mode = '', relative = false){
 
 // assign events to all of the range buttons
 Array.from(document.getElementsByClassName("rangeButton")).forEach(function(arrayElement){
-   arrayElement.addEventListener('click', () => {startHantek(arrayElement.getAttribute('data-rangeValue'));});
-});
+   arrayElement.addEventListener('click', () => {
+       startHantek(arrayElement.getAttribute('data-rangeValue'));
+       graphData = [];
+       graph.updateOptions( { 'file': graphData } );
+       var tableBody = document.getElementById("bodyTableReadings");
+       tableBody.innerHTML = "";
 
-/*
-document.querySelector('#btnStartHantek').addEventListener('click', () => { startHantek() });
-document.querySelector('#btnVoltsDc').addEventListener('click', () => { startHantek('vdc') });
-document.querySelector('#btnVoltsAc').addEventListener('click', () => { startHantek('vac') });
-document.querySelector('#btnAmpsDc').addEventListener('click', () => { startHantek('adc') });
-document.querySelector('#btnAmpsAc').addEventListener('click', () => { startHantek('aac') });
-document.querySelector('#btnOhm').addEventListener('click', () => { startHantek('ohm') });
-document.querySelector('#btnDiode').addEventListener('click', () => { startHantek('diode') });
-document.querySelector('#btnConti').addEventListener('click', () => { startHantek('conti') });
-document.querySelector('#btnCap').addEventListener('click', () => { startHantek('cap') });
-document.querySelector('#btnTemp').addEventListener('click', () => { startHantek('temp') });
-*/
+   });
+});
 
 // IPC
 ipcRenderer.on('readingMessage', (event, props) => {
@@ -52,7 +48,7 @@ ipcRenderer.on('readingMessage', (event, props) => {
     {
         // this is a reading packet.
         // strip the newline, the hash and the leading + if it exists.
-        readingString = readingString.replace(/[\+#\n]+/, "");
+        readingString = readingString.replace(/[\+#\n]+/g, "");
         var readingElements = readingString.split(" ");
         var readingValue = parseFloat(readingElements[0]);
 
@@ -69,6 +65,17 @@ ipcRenderer.on('readingMessage', (event, props) => {
         readingTotal += readingValue;
         readingCount++;
 
+        //work out what range the datalogger is operating in
+        range = readingElements[0].replace("-", "");
+        range = range.replace(/[0-9\?:]/g, "0");
+        range = range.replace("0", "6");
+        range = range+readingElements[1];
+        if(range == "6000VDC")
+        {
+            range="800VDC";
+        }
+
+
         var displayElement = document.getElementById("dmmDisplay");
         if (readingElements[0].startsWith('?'))
         {
@@ -76,33 +83,100 @@ ipcRenderer.on('readingMessage', (event, props) => {
         }else{
             displayElement.textContent = readingElements[0] + " " + readingElements[1];
         }
+
+        var rangeElement = document.getElementById("rangeDisplay");
+        rangeElement.innerHTML = '<span style="color:gray;">RANGE:</span>&nbsp;&nbsp;&nbsp;' + readingElements[2] + '&nbsp;&nbsp;&nbsp;' + range;
+
+        // show the manual range selection button groups based on the current reading units
+        Array.from(document.getElementsByClassName("rangeButtonGroup")).forEach(function(arrayElement){
+            if (readingElements[1].endsWith(arrayElement.getAttribute('data-showSuffix')))
+            {
+                arrayElement.classList.remove("hidden");
+            }else{
+                arrayElement.classList.add("hidden");
+            }
+        });
+
+        // select Manual and Auto buttons based on AUTO and range.
+        if (readingElements[2] == "AUTO")
+        {
+            ["autoButton", "majorModeButton"].forEach(function(classSelector){
+                Array.from(document.getElementsByClassName(classSelector)).forEach(function(arrayElement){
+                    if (readingUnit.endsWith(arrayElement.getAttribute('data-activeUnits'))){
+                        arrayElement.classList.add("active");
+                    } else {
+                        arrayElement.classList.remove("active");
+                    }
+                });
+            });
+
+            // the Auto mA buttons need additional handling to deactivate the A button
+            if(readingUnit == "mAAC" || readingUnit == "mADC"){
+                document.getElementById('btnAmpsAc').classList.remove('active');
+                document.getElementById('btnAmpsDc').classList.remove('active');
+            }
+
+
+            Array.from(document.getElementsByClassName("manuButton")).forEach(function(arrayElement){
+                arrayElement.classList.remove("active");
+            });
+
+        }else{
+            ["autoButton", "majorModeButton"].forEach(function(classSelector){
+                Array.from(document.getElementsByClassName(classSelector)).forEach(function(arrayElement){
+                    arrayElement.classList.remove("active");
+                });
+            });
+
+            Array.from(document.getElementsByClassName("manuButton")).forEach(function(arrayElement){
+                if (range == arrayElement.getAttribute('data-activeRange'))
+                {
+                    arrayElement.classList.add("active");
+                }else{
+                    arrayElement.classList.remove("active");
+                }
+            });
+        }
+
+
+
+
+
     } else {
+        console.log("Hantek Info: " + readingString)
+        /*
         var pre = document.getElementById('preStatus');
         var div = document.getElementById('divStatus');
         pre.innerHTML += readingString;
         div.scrollTop = div.scrollHeight;
+        */
     }
 });
 
 ipcRenderer.on('errorMessage', (event, props) => {
     //console.log({event, props});
     var errorString = new TextDecoder("utf-8").decode(props.data);
+    console.log("Hantek Error: " + errorString)
+    /*
     var pre = document.getElementById('preStatus');
     var div = document.getElementById('divStatus');
     pre.innerHTML += '<span style="color:red;">' + errorString + '</span>';
     div.scrollTop = div.scrollHeight;
+    */
 });
 
 ipcRenderer.on('statusMessage', (event, props) => {
-    //console.log({event, props});
+    console.log("Hantek Status: " + props.data)
+    /*
     var pre = document.getElementById('preStatus');
     var div = document.getElementById('divStatus');
     pre.innerHTML += '<span style="color:blue;">' + props.data + '</span>';
     div.scrollTop = div.scrollHeight;
+    */
 });
 
 window.onload = function() {
-      var data = [];
+
       /*
       var t = new Date();
       for (var i = 10; i >= 0; i--) {
@@ -111,9 +185,9 @@ window.onload = function() {
       }
       */
 
-      var g = new Dygraph(document.getElementById("div_g"), data,
+      graph = new Dygraph(document.getElementById("div_g"), graphData,
                           {
-                            drawPoints: true,
+                            drawPoints: false,
                             //showRoller: true,
                             //valueRange: [0.0, 1.2],
                             labels: ['Time', 'Value']
@@ -125,8 +199,8 @@ window.onload = function() {
         readingTotal = 0.0;
         readingCount = 0;
 
-        var table = document.getElementById("tableReadings");
-        var row = table.insertRow(-1);
+        var tableBody = document.getElementById("bodyTableReadings");
+        var row = tableBody.insertRow(-1);
 
         var dateTime = row.insertCell(0);
         var value = row.insertCell(1);
@@ -137,8 +211,8 @@ window.onload = function() {
         value.innerHTML = y.toFixed(3);
         unit.innerHTML = readingUnit;
 
-        data.push([x, y]);
-        g.updateOptions( { 'file': data } );
+        graphData.push([x, y]);
+        graph.updateOptions( { 'file': graphData } );
         //g.resize();
-      }, 1000);
+    }, 1000);
     };

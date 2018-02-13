@@ -1,21 +1,21 @@
 {
-  "name": "electron-quick-start",
+  "name": "hantek-365",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "A GUI for working with Hantek 365 Data Loggers",
   "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "git@github.com:mp035/hantek-365.git",
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "Hantek",
+    "365",
+    "data",
+    "logger",
+    "datalogger"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "Mark Pointing",
+  "license": "GPL v3",
   "devDependencies": {
     "electron": "~1.7.8"
   },

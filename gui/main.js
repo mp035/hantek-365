@@ -60,23 +60,35 @@ function startHantek(mode = "", relative = false){
         htargs.push(mode);
     }
 
-    hantek = spawn('../hantek', htargs);
+    hantek = spawn('../cli/hantek', htargs);
 
-    mainWindow.webContents.send('statusMessage', { 'data': "Hantek process (re)started." });
+    mainWindow.webContents.send('statusMessage', { 'data': "Hantek process (re)started.\n" });
 
     // keep a flag for auto-restart on usb error
     hantek.shouldBeRunning = true;
 
     hantek.on('exit', function (code, signal) {
-        mainWindow.webContents.send('statusMessage', { 'data': `Hantek process exited with code ${code} and signal ${signal}` });
+        try{
+            mainWindow.webContents.send('statusMessage', { 'data': `Hantek process exited with code ${code} and signal ${signal}\n` });
+        }catch(err){
+            console.log(err.message);
+        }
     });
 
     hantek.stdout.on('data', (data) => {
-        mainWindow.webContents.send('readingMessage', { 'data': data });
+        try{
+            mainWindow.webContents.send('readingMessage', { 'data': data });
+        }catch(err){
+            console.log(err.message);
+        }
     });
 
     hantek.stderr.on('data', (data) => {
-        mainWindow.webContents.send('errorMessage', { 'data': data });
+        try{
+            mainWindow.webContents.send('errorMessage', { 'data': data });
+        }catch(err){
+            console.log(err.message);
+        }
     });
 
 

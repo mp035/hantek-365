@@ -435,8 +435,6 @@ int main(int argc, char **argv) {
                     unsigned char sign = databuff[1]; // bit 2 (0x04) is the negative sign, bit 1 (0x02) is the positive sign
                     unsigned char acdc = databuff[8]; // AC, DC, ABS, REL
                     unsigned char dpos = databuff[7]; // decimal position from the left as an ASCII value representing a bit mask ('1' = 1, '2' = 2, '4' = 3)
-                    unsigned char mult = databuff[10]; // (m)illi, (k)ilo, (M)eg, and micro (u)
-                    unsigned char units = databuff[11]; // Volts, Amps, ohms, degc, degf
 
                     if(sign & 0x04)
                     {
@@ -460,7 +458,7 @@ int main(int argc, char **argv) {
                         }
                     }
 
-
+                    int beepFlag = 0;
 
                     switch(databuff[10])
                     {
@@ -476,6 +474,11 @@ int main(int argc, char **argv) {
                         case 0x10:
                             fprintf(stdout, " M");
                             break;
+                        case 0x08:
+                            // beep symbol indicating CONT mode.
+                            beepFlag=1;
+                            fprintf(stdout, " ");
+                            break;
                         default:
                             if (databuff[9] & 0x02)
                             {
@@ -488,7 +491,7 @@ int main(int argc, char **argv) {
                     }
 
 
-                    switch(units)
+                    switch(databuff[11])
                     {
                         case 0x01:
                             fprintf(stdout, "\xc2\xb0""F");
@@ -501,6 +504,8 @@ int main(int argc, char **argv) {
                             break;
                         case 0x20:
                             fprintf(stdout, "ohms");
+                            if (beepFlag)
+                                fprintf(stdout, "\xe2\x99\xab"); // add a beamed eigth note to indicate continuity mode.
                             break;
                         case 0x40:
                             fprintf(stdout, "A");
@@ -509,7 +514,7 @@ int main(int argc, char **argv) {
                             fprintf(stdout, "V");
                             break;
                         default:
-                            fprintf(stdout, " %02x", units);
+                            fprintf(stdout, " %02x", databuff[11]);
                     }
 
                     if (acdc & 0x08)
@@ -518,12 +523,13 @@ int main(int argc, char **argv) {
                         fprintf(stdout, "DC");
                     //if (acdc & 0x01)
                     //    fprintf(stdout, ""); // i don't know what this bit is, it is set on volts, amps and ohms, but not temperature, diode, .
-                    if (acdc & 0x04)
-                        fprintf(stdout, " REL");
                     if (acdc & 0x20)
                         fprintf(stdout, " AUTO");
                     else
                         fprintf(stdout, " MANU");
+
+                    if (acdc & 0x04)
+                        fprintf(stdout, " REL");
 
                     fprintf(stdout, "\n");
 
