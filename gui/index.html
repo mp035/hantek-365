@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=2, user-scalable=no" name="viewport" />
+    <meta content="#ffffff" name="theme-color" />
+    <title>Hantek 365B Datalogger GUI</title>
+    <link href="./node_modules/semantic-ui/dist/semantic.min.css" rel="stylesheet" type="text/css" />
+    <link href="./css/default.css" rel="stylesheet" type="text/css" />
+    <link href="./css/main.css" rel="stylesheet" type="text/css" />
+    <script>
+        window.nodeRequire = require;
+        delete window.require;
+        delete window.exports;
+        delete window.module;
+    </script>
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="./node_modules/semantic-ui/dist/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./node_modules/dygraphs/dist/dygraph.min.css">
+</head>
+<body>
+
+    <!-- Position of graph, table, and content is absolute. -->
+    <div id="div_g"></div>
+    <div id="div_t">
+        <table id="tableReadings" class="ui table striped">
+            <tr>
+                <th>Date/Time</th><th>Reading</th><th>Unit</th>
+            </tr>
+        </table>
+    </div>
+
+    <!--div class="ui stackable grid container"-->
+    <div class="expand-container" id="div_c">
+        <div class="expand-no">
+            <div class="ui stackable grid container">
+            <div class="row">
+            <h3 class="ui large header">
+                Hantek 365B Datalogger
+            </h3>
+
+            <div class="ui ten item fluid stackable huge menu" style="height:40px;">
+                <button class="active item" type="button" id="btnStartHantek">Run</button>
+                <button class="item rangeButton" type="button" id="btnVoltsDc" data-rangeValue="vdc">V DC</button>
+                <button class="item rangeButton" type="button" id="btnVoltsAc" data-rangeValue="vac">V AC</button>
+                <button class="item rangeButton" type="button" id="btnAmpsDc" data-rangeValue="adc">A DC</button>
+                <button class="item rangeButton" type="button" id="btnAmpsAc" data-rangeValue="aac">A AC</button>
+                <button class="item rangeButton" type="button" id="btnOhm" data-rangeValue="ohm">OHM</button>
+                <button class="item rangeButton" type="button" id="btnDiode" data-rangeValue="diode">DIODE</button>
+                <button class="item rangeButton" type="button" id="btnConti" data-rangeValue="cont">CONTI</button>
+                <button class="item rangeButton" type="button" id="btnCap" data-rangeValue="cap">CAP</button>
+                <button class="item rangeButton" type="button" id="btnTemp" data-rangeValue="temp">TEMP</button>
+            </div>
+
+            <div class="ui ten item fluid stackable huge menu" style="height:40px;">
+                <button class="item rangeButton" type="button" id="btnAutoVoltsDc" data-rangeValue="vdc">AUTO</button>
+                <button class="item rangeButton" type="button" id="btn60mVoltsDc" data-rangeValue="60mvdc">60mVDC</button>
+                <button class="item rangeButton" type="button" id="btn600mVoltsDc" data-rangeValue="600mvdc">600mVDC</button>
+                <button class="item rangeButton" type="button" id="btn6VoltsDc" data-rangeValue="6vdc">6VDC</button>
+                <button class="item rangeButton" type="button" id="btn60VoltsDc" data-rangeValue="60vdc">60VDC</button>
+                <button class="item rangeButton" type="button" id="btn600VoltsDc" data-rangeValue="600vdc">600VDC</button>
+                <button class="item rangeButton" type="button" id="btn800VoltsDc" data-rangeValue="800vdc">800VDC</button>
+            </div>
+
+            <div class="ui ten item fluid stackable huge menu" style="height:40px;">
+                <button class="item rangeButton" type="button" id="btnAutoVoltsAc" data-rangeValue="vac">AUTO</button>
+                <button class="item rangeButton" type="button" id="btn60mVoltsAc" data-rangeValue="60mvac">60mVAC</button>
+                <button class="item rangeButton" type="button" id="btn600mVoltsAc" data-rangeValue="600mvac">600mVAC</button>
+                <button class="item rangeButton" type="button" id="btn6VoltsAc" data-rangeValue="6vac">6VAC</button>
+                <button class="item rangeButton" type="button" id="btn60VoltsAc" data-rangeValue="60vac">60VAC</button>
+                <button class="item rangeButton" type="button" id="btn600VoltsAc" data-rangeValue="600vac">600VAC</button>
+            </div>
+
+            </div>
+            </div>
+        </div>
+        <div class="expand-no ui large header">
+            <h1 id="dmmDisplay"></h2>
+        </div>
+
+        <div class="expand-yes">
+        </div>
+
+        <div class="expand-no" id="divStatus" style="overflow:scroll;height:100px;width:100%; flex: 0 0 100px;">
+            <pre id="preStatus"></pre>
+        </div>
+
+        <div class="expand-no">
+            <div class="column">
+                <div class="ui divider"></div>
+                <footer>
+                    We are using Node.js <script>document.write(process.versions.node)</script>,
+                    Chromium <script>document.write(process.versions.chrome)</script>,
+                    and Electron <script>document.write(process.versions.electron)</script>.
+                </footer>
+            </div>
+        </div>
+    </div>
+
+<script>
+// You can also require other files to run in this process
+nodeRequire('./renderer.js')
+</script>
+
+</body>
+</html>

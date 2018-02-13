@@ -1,0 +1,8 @@
+env = Environment() # Initialize the environment
+env.Program(target = 'hantek', 
+    source=['main.c'],
+    LIBS=['usb-1.0'], 
+    LIBPATH='/usr/lib/x86_64-linux-gnu/',
+    CPPPATH='/usr/include/libusb-1.0/'
+    )
+

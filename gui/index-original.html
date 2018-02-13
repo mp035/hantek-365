@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Hantek 365B Datalogger GUI</title>
+        <link rel="stylesheet" type="text/css" href="./node_modules/dygraphs/dist/dygraph.min.css">
+
+
+        <link rel="stylesheet" type="text/css" href="./node_modules/semantic-ui/dist/semantic.min.css">
+        <script src="./node_modules/jquery/jquery.min.js"></script>
+        <script src="./node_modules/semantic-ui/dist/semantic.min.js"></script>
+
+
+    </head>
+    <body>
+        <div class="ui container">
+
+
+         <button class="ui button" type="button" id="btnStartHantek">Run</button>
+         <button class="ui button" type="button" id="btnVoltsDc">V DC</button>
+         <button class="ui button" type="button" id="btnVoltsAc">V AC</button>
+         <button class="ui button" type="button" id="btnAmpsDc">A DC</button>
+         <button class="ui button" type="button" id="btnAmpsAc">A AC</button>
+         <button class="ui button" type="button" id="btnOhm">OHM</button>
+         <button class="ui button" type="button" id="btnDiode">DIODE</button>
+         <button class="ui button" type="button" id="btnConti">CONTI</button>
+         <button class="ui button" type="button" id="btnCap">CAP</button>
+         <button class="ui button" type="button" id="btnTemp">TEMP</button>
+
+
+        <!-- All of the Node.js APIs are available in this renderer process. -->
+
+        <div style="text-size:large;">
+            <pre id="dmmDisplay"></pre>
+        </div>
+
+        <div id="div_g" style="width:600px; height:300px;"></div>
+
+        <pre id="preStatus">
+
+        </pre>
+        </div>
+        We are using Node.js <script>document.write(process.versions.node)</script>,
+        Chromium <script>document.write(process.versions.chrome)</script>,
+        and Electron <script>document.write(process.versions.electron)</script>.
+
+        </div>
+
+        <script>
+            // You can also require other files to run in this process
+            require('./renderer.js')
+        </script>
+    </body>
+</html>

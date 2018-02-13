@@ -1,0 +1,4 @@
+# hantek HT365B datalogger
+
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="0483", ATTRS{idProduct}=="5722", \
+    MODE:="0666"
