@@ -8,12 +8,12 @@ the factory software for Windows.
 First make sure you have the dependencies installed.
 
 **For the CLI** you need:
-*libusb1.0-dev
-*scons (for building)
+* libusb1.0-dev
+* scons (for building)
 
 **For the GUI** you need:
-*nodejs
-*npm
+* nodejs
+* npm
 
 ```
 sudo apt install npm libusb-1.0-0-dev scons
