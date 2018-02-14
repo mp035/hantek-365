@@ -2,8 +2,15 @@ const electron = require('electron');
 // Module to control application life.
 const app = electron.app;
 
+
+// for communcating between renderer and main
 const ipcMain = electron.ipcMain;
+
+// save dialog to allow saving of data files
 const dialog = electron.dialog;
+
+// fs module to do the actual saving
+var fs = require('fs'); // Load the File System to execute our common tasks (CRUD)
 
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
@@ -13,6 +20,7 @@ const url = require('url');
 
 const {spawn} = require("child_process");
 
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -20,29 +28,31 @@ let mainWindow;
 let hantek = null;
 
 function createWindow () {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600});
+    // Create the browser window.
+    mainWindow = new BrowserWindow({width: 1024, height: 700});
 
-  // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
+    // and load the index.html of the app.
+    mainWindow.loadURL(url.format({
+        pathname: path.join(__dirname, 'index.html'),
+        protocol: 'file:',
+        slashes: true
     }));
 
-  // start the initial hantek process here.  (this will probably change in future)
-  startHantek();
+    // start the initial hantek process here.  (this will probably change in future)
+    startHantek();
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+    // Open the DevTools.
+    // mainWindow.webContents.openDevTools()
 
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null
+    // Emitted when the window is closed.
+    mainWindow.on('closed', function () {
+        // Dereference the window object, usually you would store windows
+        // in an array if your app supports multi windows, this is the time
+        // when you should delete the corresponding element.
+        mainWindow = null
     });
+
+    require('./appmenu');
 }
 
 function startHantek(mode = "", relative = false){
@@ -63,9 +73,6 @@ function startHantek(mode = "", relative = false){
     hantek = spawn('../cli/hantek', htargs);
 
     mainWindow.webContents.send('statusMessage', { 'data': "Hantek process (re)started.\n" });
-
-    // keep a flag for auto-restart on usb error
-    hantek.shouldBeRunning = true;
 
     hantek.on('exit', function (code, signal) {
         try{
@@ -96,13 +103,33 @@ function startHantek(mode = "", relative = false){
 
 ipcMain.on('initHantekMessage', (event, props) => {
     startHantek(props.mode, props.relative);
-  });
+});
 
 
 
-  ipcMain.on('doBlockingWork', () => {
-    const work = require('./work');
-    work();
+ipcMain.on('stopHantekMessage', () => {
+    if(hantek){
+        // kill the process if it is running
+        hantek.kill();
+    }
+});
+
+ipcMain.on('saveDataResponse', (event, data) => {
+    dialog.showSaveDialog({filters:[{name:"Comma Separated Variable", extensions:["csv","txt"] }]},(fileName) => {
+        if (fileName === undefined){
+            console.log("You didn't save the file");
+            return;
+        }
+
+        // fileName is a string that contains the path and filename created in the save file dialog.  
+        fs.writeFile(fileName, data, (err) => {
+            if(err){
+                dialog.showMessageBox({ message: "An error occurred saving the file: "+ err.message, buttons: ["OK"] });
+            }else{
+                dialog.showMessageBox({ message: "The file has been successfully saved.", buttons: ["OK"] });
+            }
+        });
+    }); 
 });
 
 

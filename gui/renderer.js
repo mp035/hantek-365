@@ -13,6 +13,8 @@ var readingCount = 0;
 var readingUnit = "";
 var graphData = [];
 var graph;
+var readingInterval = 1;
+var readingIntervalCount = 0;
 
 // wrap initHantekMessage in function call
 function startHantek(mode = '', relative = false){
@@ -26,11 +28,32 @@ function startHantek(mode = '', relative = false){
 Array.from(document.getElementsByClassName("rangeButton")).forEach(function(arrayElement){
    arrayElement.addEventListener('click', () => {
        startHantek(arrayElement.getAttribute('data-rangeValue'));
-       graphData = [];
-       graph.updateOptions( { 'file': graphData } );
-       var tableBody = document.getElementById("bodyTableReadings");
-       tableBody.innerHTML = "";
+   });
+});
 
+// assign an event to the rel button
+document.getElementById("btnRel").addEventListener('click',()=>{
+    startHantek("", true);
+});
+
+// assign an event to the stop button
+document.getElementById("btnStop").addEventListener('click',()=>{
+    ipcRenderer.send('stopHantekMessage');
+});
+
+// assign an event to the clear button
+document.getElementById("btnClear").addEventListener('click',()=>{
+    graphData = [];
+    graph.updateOptions( { 'file': graphData } );
+    var tableBody = document.getElementById("bodyTableReadings");
+    tableBody.innerHTML = "";
+});
+
+// assign events to all of the interval links
+Array.from(document.getElementsByClassName("intervalSelector")).forEach(function(arrayElement){
+   arrayElement.addEventListener('click', () => {
+       readingInterval = arrayElement.getAttribute('data-value');
+       console.log("Recording interval is " + readingInterval);
    });
 });
 
@@ -138,81 +161,100 @@ ipcRenderer.on('readingMessage', (event, props) => {
             });
         }
 
+        // highlight the rel function based on whether there is a REL element at the 
+        // end of the packet
+        if ((readingElements.length == 4) && (readingElements[3] == "REL")){
+            document.getElementById("btnRel").classList.add('active');
+        }else{
+            document.getElementById("btnRel").classList.remove('active');
+        }
+
+
 
 
 
 
     } else {
         console.log("Hantek Info: " + readingString)
-        /*
-        var pre = document.getElementById('preStatus');
-        var div = document.getElementById('divStatus');
-        pre.innerHTML += readingString;
-        div.scrollTop = div.scrollHeight;
-        */
     }
 });
 
 ipcRenderer.on('errorMessage', (event, props) => {
-    //console.log({event, props});
     var errorString = new TextDecoder("utf-8").decode(props.data);
     console.log("Hantek Error: " + errorString)
-    /*
-    var pre = document.getElementById('preStatus');
-    var div = document.getElementById('divStatus');
-    pre.innerHTML += '<span style="color:red;">' + errorString + '</span>';
-    div.scrollTop = div.scrollHeight;
-    */
 });
 
 ipcRenderer.on('statusMessage', (event, props) => {
     console.log("Hantek Status: " + props.data)
-    /*
-    var pre = document.getElementById('preStatus');
-    var div = document.getElementById('divStatus');
-    pre.innerHTML += '<span style="color:blue;">' + props.data + '</span>';
-    div.scrollTop = div.scrollHeight;
-    */
+});
+
+ipcRenderer.on('saveDataMessage', (event, props) => {
+    var tableBody = document.getElementById("bodyTableReadings");
+    var dataToSave = "date,value,unit\n";
+    for (var i = 0, row; row = tableBody.rows[i]; i++) {
+        //iterate through rows
+        //rows would be accessed using the "row" variable assigned in the for loop
+        dataToSave += row.cells[0].textContent + "," + 
+            row.cells[1].textContent + "," + 
+            row.cells[2].textContent + "\n";
+    }
+    console.log(dataToSave);
+    ipcRenderer.send('saveDataResponse', dataToSave);
 });
 
 window.onload = function() {
 
-      /*
-      var t = new Date();
-      for (var i = 10; i >= 0; i--) {
-        var x = new Date(t.getTime() - i * 1000);
-        data.push([x, Math.random()]);
-      }
-      */
+    graph = new Dygraph(document.getElementById("div_g"), graphData,
+            {
+                drawPoints: false,
+                showRoller: false,
+                valueRange: null,
+                labels: ['Time', 'Value']
+            });
+    // It sucks that these things aren't objects, and we need to store state in window.
+    window.intervalId = setInterval(function() {
 
-      graph = new Dygraph(document.getElementById("div_g"), graphData,
-                          {
-                            drawPoints: false,
-                            //showRoller: true,
-                            //valueRange: [0.0, 1.2],
-                            labels: ['Time', 'Value']
-                          });
-      // It sucks that these things aren't objects, and we need to store state in window.
-      window.intervalId = setInterval(function() {
-        var x = new Date();  // current time
-        var y = readingTotal / readingCount;
-        readingTotal = 0.0;
-        readingCount = 0;
+        var runButton = document.getElementById("btnRun");
+        var stopButton = document.getElementById("btnStop");
 
-        var tableBody = document.getElementById("bodyTableReadings");
-        var row = tableBody.insertRow(-1);
+        readingIntervalCount++;
+        if (readingIntervalCount >= readingInterval)
+        {
+            readingIntervalCount = 0;
 
-        var dateTime = row.insertCell(0);
-        var value = row.insertCell(1);
-        var unit = row.insertCell(2);
+            if (readingCount){
 
-        // Add some text to the new cells:
-        dateTime.innerHTML = x.toISOString();
-        value.innerHTML = y.toFixed(3);
-        unit.innerHTML = readingUnit;
+                stopButton.classList.remove('active');
+                runButton.classList.add('active');
 
-        graphData.push([x, y]);
-        graph.updateOptions( { 'file': graphData } );
-        //g.resize();
+
+                var x = new Date();  // current time
+                var y = readingTotal / readingCount;
+                readingTotal = 0.0;
+                readingCount = 0;
+
+                var tableBody = document.getElementById("bodyTableReadings");
+                var row = tableBody.insertRow(-1);
+
+                var dateTime = row.insertCell(0);
+                var value = row.insertCell(1);
+                var unit = row.insertCell(2);
+
+                // Add some text to the new cells:
+                dateTime.innerHTML = x.toISOString();
+                value.innerHTML = y.toFixed(3);
+                unit.innerHTML = readingUnit;
+
+                graphData.push([x, y]);
+                graph.updateOptions( { 'file': graphData } );
+            }else{
+                runButton.classList.remove('active');
+                stopButton.classList.add('active');
+            }
+        }
+
     }, 1000);
-    };
+
+    // initialise the semantic dropdown controls.
+    $('.ui.dropdown').dropdown();
+};

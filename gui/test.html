@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
+    <meta content="width=device-width, initial-scale=1, maximum-scale=2, user-scalable=no" name="viewport" />
+    <meta content="#ffffff" name="theme-color" />
+    <title>Hantek 365B Datalogger GUI</title>
+    <link href="./node_modules/semantic-ui/dist/semantic.css" rel="stylesheet" type="text/css" />
+    <!--link href="./css/default.css" rel="stylesheet" type="text/css" /-->
+    <link href="./css/main.css" rel="stylesheet" type="text/css" />
+    <script>
+        window.nodeRequire = require;
+        delete window.require;
+        delete window.exports;
+        delete window.module;
+    </script>
+    <script src="./node_modules/jquery/dist/jquery.js"></script>
+    <script src="./node_modules/semantic-ui/dist/semantic.js"></script>
+</head>
+<body>
+    <div class="main ui container">
+    <div class="ui menu">
+        <span class="item"><b>Hantek 365B Datalogger</b></span>
+            <div class="right menu">
+                <div class="item ui dropdown">
+                    <input name="gender" type="hidden">
+                    <i class="dropdown icon"></i>
+                    <div class="default text"> Recording Interval</div>
+                    <div class="menu">
+                        <div class="item" data-value="1">1 Second</div>
+                        <div class="item" data-value="2">2 Seconds</div>
+                        <div class="item" data-value="3">3 Seconds</div>
+                        <div class="item" data-value="4">4 Seconds</div>
+                        <div class="item" data-value="5">5 Seconds</div>
+                        <div class="item" data-value="10">10 Seconds</div>
+                        <div class="item" data-value="15">15 Seconds</div>
+                        <div class="item" data-value="30">30 Seconds</div>
+                        <div class="item" data-value="60">1 Minute</div>
+                        <div class="item" data-value="120">2 Minutes</div>
+                        <div class="item" data-value="300">5 Minutes</div>
+                    </div>
+                </div>
+
+
+
+
+
+                <a class="item rangeButton" type="a" id="btnRun" data-rangeValue="">Run</a>
+                <a href="index.html" class="item" type="a" id="btnStop">Stop</a>
+                <a class="item" type="a" id="btnRel">Rel</a>
+
+            </div>
+    </div>
+
+    <div class="ui dropdown">
+        <input name="gender" type="hidden">
+        <i class="dropdown icon"></i>
+        <div class="default text">Gender</div>
+        <div class="menu">
+            <div class="item" data-value="male">Male</div>
+            <div class="item" data-value="female">Female</div>
+        </div>
+    </div>
+    <script>
+        $('.ui.dropdown').dropdown();
+    </script>
+
+</body>
