@@ -37,20 +37,28 @@ The CLI application should report any issues connecting to your device.
 
 ## How to build for Windows (Thanks [trbLeeciN](https://github.com/trbLeeciN))
 Things you need;
-**Zadig**
-<https://zadig.akeo.ie/>
+
+**Zadig** <https://zadig.akeo.ie/>
+
 Zadig used to change driver of Hantek, since Hantek365 driver can not be used, so we need to change Hantek driver as libusb driver.
-**Mingw**
-<http://www.mingw.org/>
+
+**Mingw** <http://www.mingw.org/>
+
 Mingw is C complier. Make sure you install gcc too,
 I followed following guide to install Mingw.
+
 <http://www.mingw.org/wiki/howto_install_the_mingw_gcc_compiler_suite>
+
 After these I added path of mingw path as system variable path. I am not sure if it is necessary or not, but I did it and it works. Guide to add path is below, many examples can be found for this.
+
 <https://www.rose-hulman.edu/class/csse/resources/MinGW/installation.htm>
-**Libusb Driver**
+
+**Libusb Driver** <https://libusb.info/>
+
 Libusb is available in windows as libusb-1.0.dll. You need to download it. And place in the same folder with your .c file.
-<https://libusb.info/>
+
 **Modified .C file**
+
 To compily .c file you need some modifications. I used transfer_main.c file as main and modified it. You can find attached .c file in attachments. (Thanks to CanKoçak)
 I will add libusb driver for you in attachments.
 Also I will add my exe file, so if you need you can use it. I changed output format since I will use it in another application.
