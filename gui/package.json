@@ -1,12 +1,16 @@
 {
   "name": "hantek-365",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A GUI for working with Hantek 365 Data Loggers",
   "main": "main.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron ."
   },
-  "repository": "git@github.com:mp035/hantek-365.git",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/mp035/hantek-365.git"
+  },
   "keywords": [
     "Hantek",
     "365",
@@ -15,13 +19,18 @@
     "datalogger"
   ],
   "author": "Mark Pointing",
-  "license": "GPL v3",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/mp035/hantek-365/issues"
+  },
+  "homepage": "https://github.com/mp035/hantek-365#readme",
   "devDependencies": {
-    "electron": "^4.0.4"
+    "electron": "^8.0.1",
+    "gulp": "^4.0.2"
   },
   "dependencies": {
     "dygraphs": "^2.1.0",
-    "jquery": "^3.3.1",
-    "semantic-ui": "^2.4.2"
+    "fomantic-ui": "^2.8.3",
+    "jquery": "^3.4.1"
   }
 }
