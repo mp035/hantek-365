@@ -135,8 +135,6 @@ ipcMain.on("saveDataResponse", async (event, data) => {
     }
 
     const fileName = result.filePath;
-    console.log(fileName);
-    console.log(data);
 
     // fileName is a string that contains the path and filename created in the save file dialog.
     fs.writeFile(fileName, data, (err) => {
