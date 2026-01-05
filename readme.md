@@ -18,7 +18,7 @@ First make sure you have the dependencies installed.
 ```
 sudo apt install npm libusb-1.0-0-dev scons
 cd #to whatever folder you want to unpack in
-git clone git@github.com:mp035/hantek-365.git
+git clone https://github.com/mp035/hantek-365.git
 cd hantek-365
 cd cli
 scons
