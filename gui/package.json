@@ -26,11 +26,11 @@
   "homepage": "https://github.com/mp035/hantek-365#readme",
   "devDependencies": {
     "electron": "^22.0.0",
-    "gulp": "^4.0.2"
+    "gulp": "^5.0.1"
   },
   "dependencies": {
     "dygraphs": "^2.1.0",
-    "fomantic-ui": "^2.9.0",
+    "fomantic-ui": "^2.9.4",
     "jquery": "^3.5.0"
   }
 }
