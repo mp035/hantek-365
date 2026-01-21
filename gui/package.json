@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "dygraphs": "^2.1.0",
-    "fomantic-ui": "^2.9.0",
+    "fomantic-ui": "^2.9.4",
     "jquery": "^3.5.0"
   }
 }
